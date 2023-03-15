@@ -1,5 +1,7 @@
 # Offchain Verification Demo PolygonID
 
+[![Try on repl.it](https://repl-badge.jajoosam.repl.co/try.png)](https://replit.com/@CodingMage/offchain-verifier?v=1)
+
 > Any application that wants to authenticate user based on their Polygon ID Identity off-chain must set up a Verifier. A Verifier is made of a Server and a Client.
 
 ![](./public/off-chain-flow.png)
@@ -49,12 +51,12 @@ You can get a KYCAgeCredential from [Demo issuer](https://issuer-demo.polygonid.
 // ./src/server/GetAuthRequest
 const proofRequest = {
   id: 1,
-  circuitId: 'credentialAtomicQuerySigV2',
+  circuitId: "credentialAtomicQuerySigV2",
   query: {
-    allowedIssuers: ['*'],
-    type: 'KYCAgeCredential',
+    allowedIssuers: ["*"],
+    type: "KYCAgeCredential",
     context:
-      'https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld',
+      "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
     credentialSubject: {
       birthday: {
         $lt: 20050101,
