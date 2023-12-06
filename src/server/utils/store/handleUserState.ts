@@ -1,12 +1,12 @@
-import store from "store2";
-import { AuthorizationResponseMessage } from "@iden3/js-iden3-auth/dist/cjs/protocol";
-import { updateUserSession } from "./handleStoreData";
+import store from 'store2';
+import { updateUserSession } from './handleStoreData';
+import { AuthorizationResponseMessage } from '@iden3/js-iden3-auth/dist/types/types-sdk';
 
 export function handleUserState(
   userExist: boolean,
   authResponse: AuthorizationResponseMessage,
   sessionId: string | unknown,
-  requestMap: any,
+  requestMap: any
 ) {
   if (userExist) {
     // get and delete user previous session
@@ -19,7 +19,7 @@ export function handleUserState(
     store.set(sessionId, authResponse.from);
     const updatedUser = updateUserSession(user, true, sessionId);
     store.set(authResponse.from, updatedUser);
-    console.log("userExist");
+    console.log('userExist');
   } else {
     store.set(sessionId, authResponse.from);
     store.set(authResponse.from, {
@@ -32,6 +32,6 @@ export function handleUserState(
         onboard: false,
       },
     });
-    console.log("New user ");
+    console.log('New user ');
   }
 }

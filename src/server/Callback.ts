@@ -1,4 +1,4 @@
-import { auth, resolver, loaders } from '@iden3/js-iden3-auth';
+import { auth, resolver, protocol } from '@iden3/js-iden3-auth';
 import { Request, Response } from 'express-serve-static-core';
 import store from 'store2';
 import { handleUserState } from './utils/store/handleUserState';
@@ -14,8 +14,7 @@ export async function Callback(req: Request, res: Response) {
   const raw = await getRawBody(req);
   const tokenStr = raw.toString().trim();
 
-  const ethURL =
-    'https://polygon-mumbai.g.alchemy.com/v2/v8E1yPmVBZsbMmFuO8v8BcSVQFZAxVU7';
+  const ethURL = process.env.RPC_URL as string;
   const contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 
   const ethStateResolver = new resolver.EthStateResolver(
@@ -30,17 +29,17 @@ export async function Callback(req: Request, res: Response) {
   // fetch authRequest from sessionID
   const authRequest = requestMap.get(`${sessionId}`);
 
-  // Locate the directory that contains circuit's verification keys
-  const verificationKeyloader = new loaders.FSKeyLoader(keyDIR);
-  const sLoader = new loaders.UniversalSchemaLoader('ipfs.io');
-
   // EXECUTE VERIFICATION
-  const verifier = new auth.Verifier(verificationKeyloader, sLoader, resolvers);
-
+  const verifier = await auth.Verifier.newVerifier({
+    stateResolver: resolvers,
+    circuitsDir: keyDIR,
+    ipfsGatewayURL: 'https://ipfs.io',
+  });
   try {
     const opts = {
       acceptedStateTransitionDelay: 5 * 60 * 1000, // 5 minute
     };
+
     const authResponse = await verifier.fullVerify(
       tokenStr,
       authRequest.request,
@@ -64,6 +63,7 @@ export async function Callback(req: Request, res: Response) {
         'user with ID: ' + authResponse.from + ' Successfully authenticated'
       );
   } catch (error) {
+    console.log('error', error);
     return res.status(500).send(error);
   }
 }
